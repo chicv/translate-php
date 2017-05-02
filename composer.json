@@ -1,0 +1,22 @@
+{
+	"name":"chicv/translate-php",
+	"type":"library",
+	"description":"Translate content combine human translation and machine translation.base on memory translation.extendable with plugin",
+	"keywords":["translation","tranlate memory","MTM"],
+	"license":"Apache License 2.0",
+	"homepage":"https://github.com/nay-kang/translate-php",
+	"authors":[
+		{
+			"name":"nay kang",
+			"email":"kunvunk@gmail.com"
+		}
+	],
+	"require":{
+		"php":">=5.5.9"
+	},
+	"autoload":{
+		"psr-4":{
+			"Translation\\":"src/"
+		}
+	}
+}
