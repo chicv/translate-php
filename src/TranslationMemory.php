@@ -10,9 +10,12 @@ class TranslationMemory{
     protected $store;
     protected $parser = [];
     protected $translator = null;
+    protected $translator_name = null;
+    
     protected $options = [
+        'from'                  => 'en',
         'to'                    => 'zh-cn',     //Translate language to which language,default zh-ch
-        'machine_translate'     => true,        //If Not find translation in memory,whether use machine tranlate,default true 
+        'auto_translate'     => true,        //If Not find translation in memory,whether use machine tranlate,default true 
     ];
     
     
@@ -29,13 +32,13 @@ class TranslationMemory{
         if($translator)
             $this->setTranslator($translator);
         
-        $this->changeTarget($this->options['to']);
+        $this->refreshTarget();
     }
     
     public function setConfig($key,$val){
         $this->options[$key] = $val;
-        if($key=='to'){
-            $this->changeTarget($val);
+        if(in_array($key, ['from','to'])){
+            $this->refreshTarget();
         }
     }
     
@@ -53,11 +56,14 @@ class TranslationMemory{
     
     public function setStore(Store $store){
         $this->store = $store;
-        $this->changeTarget($this->options['to']);
+        $this->refreshTarget();
     }
     
     public function setTranslator(Translator $translator){
         $this->translator = $translator;
+        $className = get_class($this->translator);
+        $className = explode('\\', $className);
+        $this->translator_name = array_pop($className);
     }
     
     /**
@@ -72,18 +78,22 @@ class TranslationMemory{
             $trans = $result['value'];
             $result['hits']++;
             $this->store->set($key, $result);
+            return $trans;
         }
         
         if(!$trans 
-            && $this->options['machine_translate']
+            && $this->options['auto_translate']
             && $this->translator){
-            $trans = $this->translator->t($content);
+            $trans = $this->translator->t($content,$this->options['from'],$this->options['to']);
+            
+            $this->setTranslation($content, $trans,$this->translator_name);
         }
         
         if(!$trans){
             $trans = $content;
+            $this->setTranslation($content, $trans,'None');
         }
-        $this->setTranslation($content, $trans);
+        
         return $trans;
     }
     
@@ -107,7 +117,7 @@ class TranslationMemory{
      * @param string $trans target translated language
      * @param bool $reset whether reset the hits stats
      */
-    public function setTranslation($original,$trans,$reset=false){
+    public function setTranslation($original,$trans,$translator,$reset=false){
         $key = $this->genKey($original);
         $body = $this->store->get($key);
         if($body && $reset===false){
@@ -119,6 +129,9 @@ class TranslationMemory{
         }
         $body['original'] = $original;
         $body['value'] = $trans;
+        if($translator){
+            $body['translator'] = $translator;
+        }
         $this->store->set($key, $body);
     }
     
@@ -130,8 +143,9 @@ class TranslationMemory{
         return sha1($str);
     }
     
-    protected function changeTarget($code){
-        $this->store->setDefaultPartition($code);
+    protected function refreshTarget(){
+        $key = $this->options['from'].'_to_'.$this->options['to'];
+        $this->store->setDefaultPartition($key);
     }
     
     

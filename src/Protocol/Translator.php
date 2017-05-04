@@ -7,5 +7,12 @@ namespace Translation\Protocol;
  *
  */
 interface Translator{
-    public function t($content);
+    
+    /**
+     * 
+     * @param string $content
+     * @param string $from
+     * @param string $to
+     */
+    public function t($content,$from,$to);
 }

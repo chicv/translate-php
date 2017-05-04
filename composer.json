@@ -18,5 +18,8 @@
 		"psr-4":{
 			"Translation\\":"src/"
 		}
+	},
+	"require-dev": {
+		"google/cloud": "^0.28.0"
 	}
 }
