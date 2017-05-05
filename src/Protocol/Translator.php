@@ -9,7 +9,7 @@ namespace Translation\Protocol;
 interface Translator{
     
     /**
-     * 
+     * Translate $content from language $from to language $to
      * @param string $content
      * @param string $from
      * @param string $to

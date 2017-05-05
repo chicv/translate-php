@@ -5,20 +5,38 @@ use Translation\Protocol\Parser;
 use Translation\Protocol\Store;
 use Translation\Protocol\Translator;
 
+/**
+ * Translation Core library,all operation will apply on this class
+ * backbone library
+ * @author Nay Kang
+ *
+ */
 class TranslationMemory{
     
+    //store object,use to store translations
     protected $store;
+    
+    //Various kinds of parser to split content into small unit
     protected $parser = [];
+    
+    //Sync translator,when translation not found in store,this translator will be called
     protected $translator = null;
+    //Name of the translator above
     protected $translator_name = null;
     
     protected $options = [
-        'from'                  => 'en',
-        'to'                    => 'zh-cn',     //Translate language to which language,default zh-ch
+        'from'               => 'en',        //Translate from which language
+        'to'                 => 'zh-cn',     //Translate language to which language,default zh-ch
         'auto_translate'     => true,        //If Not find translation in memory,whether use machine tranlate,default true 
     ];
     
-    
+    /**
+     * Create new Translation Memory Object
+     * @param Store $store
+     * @param array $options
+     * @param array $parsers
+     * @param Translator $translator
+     */
     public function __construct(Store $store,array $options=[],array $parsers=[],Translator $translator=null){
         $this->setStore($store);
         
@@ -35,12 +53,18 @@ class TranslationMemory{
         $this->refreshTarget();
     }
     
+    /**
+     * Change config on the fly
+     * @param string $key
+     * @param mixed $val
+     */
     public function setConfig($key,$val){
         $this->options[$key] = $val;
         if(in_array($key, ['from','to'])){
             $this->refreshTarget();
         }
     }
+    
     
     private static $_instance;
     public static function getInstance(){
@@ -50,15 +74,28 @@ class TranslationMemory{
         return static::$_instance;
     }
     
+    /**
+     * Add new parser or replace parser 
+     * @param string $type parser name
+     * @param Parser $class
+     */
     public function addParser($type,Parser $class){
         $this->parser[$type] = $class;
     }
     
+    /**
+     * Set Transation Store
+     * @param Store $store
+     */
     public function setStore(Store $store){
         $this->store = $store;
         $this->refreshTarget();
     }
     
+    /**
+     * Set sync translator
+     * @param Translator $translator
+     */
     public function setTranslator(Translator $translator){
         $this->translator = $translator;
         $className = get_class($this->translator);
@@ -135,14 +172,25 @@ class TranslationMemory{
         $this->store->set($key, $body);
     }
     
+    /**
+     * Get translation list from store
+     * @return array 
+     */
     public function getList(){
         return array_values($this->store->getList());
     }
     
+    /**
+     * Generate key for store base on translate content
+     * @param string $str
+     */
     protected function genKey($str){
         return sha1($str);
     }
     
+    /**
+     * When reset from or to language,this will be called to apply changes to plugin
+     */
     protected function refreshTarget(){
         $key = $this->options['from'].'_to_'.$this->options['to'];
         $this->store->setDefaultPartition($key);

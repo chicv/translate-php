@@ -1,8 +1,16 @@
 <?php
-namespace Translation;
+namespace Translation\Parser;
 
 use Translation\Protocol\Parser;
 
+/**
+ * Parse html,and pick content from it
+ * use ParagraphParser to break the content from html into small sentences
+ * 
+ * html tag has attribute "notranslate" will be pass
+ * @author Nay Kang
+ *
+ */
 class HTMLParser implements Parser{
     
     protected $paragraphParser = null;
@@ -11,16 +19,24 @@ class HTMLParser implements Parser{
         $this->paragraphParser = new ParagraphParser();
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Translation\Protocol\Parser::process()
+     */
     public function process($html,callable $callback){
         $dom = new \DOMDocument();
         $dom->loadHTML($html);
         $elements = $dom->getElementsByTagName('html');
-        //echo "<pre>";
         $this->throughHTML($elements->item(0),$callback);
-        //echo "</pre>";
         return $dom->saveHTML();
     }
     
+    /**
+     * Go through all html nodes,and pick content
+     * @param \DOMElement $element
+     * @param callable $callback
+     */
     protected function throughHTML($element,callable $callback){
         if(!$element->childNodes) return;
         foreach($element->childNodes as $item){

@@ -3,4 +3,3 @@
 .settings/
 vendor/
 composer.lock
-example/

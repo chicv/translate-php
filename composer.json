@@ -2,7 +2,7 @@
 	"name":"chicv/translate-php",
 	"type":"library",
 	"description":"Translate content combine human translation and machine translation.base on memory translation.extendable with plugin",
-	"keywords":["translation","tranlate memory","MTM"],
+	"keywords":["translation","tranlate memory","MTM","Multi Language SEO"],
 	"license":"Apache License 2.0",
 	"homepage":"https://github.com/nay-kang/translate-php",
 	"authors":[
@@ -20,6 +20,7 @@
 		}
 	},
 	"require-dev": {
-		"google/cloud": "^0.28.0"
+		"google/cloud": "^0.28.0",
+		"guzzlehttp/guzzle": "~6.0"
 	}
 }
