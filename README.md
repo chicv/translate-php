@@ -8,7 +8,6 @@ This is not old style translate tool,it's modern and easy,send content to it,the
 
 ```php
 $tm = new TranslationMemory();
-$tm->addParser('html', $htmlParser);
 echo $html_content = file_get_contents('https://github.com/about');
 ```
 
