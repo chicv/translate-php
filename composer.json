@@ -21,6 +21,7 @@
 	},
 	"require-dev": {
 		"google/cloud": "^0.28.0",
-		"guzzlehttp/guzzle": "~6.0"
+		"guzzlehttp/guzzle": "~6.0",
+		"stichoza/google-translate-php": "^3.2"
 	}
 }

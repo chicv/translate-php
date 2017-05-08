@@ -40,6 +40,8 @@ class HTMLParser implements Parser{
     protected function throughHTML($element,callable $callback){
         if(!$element->childNodes) return;
         foreach($element->childNodes as $item){
+            if(in_array($item->nodeName, ['style','script']) || $item instanceof \DOMCdataSection)
+                continue;
             
             if($item->attributes && $item->hasAttribute('notranslate')){
                 continue;

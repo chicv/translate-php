@@ -7,26 +7,7 @@ This is not old style translate tool,it's modern and easy,send content to it,the
 ## SHOW ME THE CODE
 
 ```php
-//Create A Simple Redis Store
-$redisStore = new RedisStore();
-$tm = new TranslationMemory($redisStore);
-
-//Setup Google Sync Translator
-$googleTranslator = new Google('Google Service Account JSON key','Google project id');
-$tm->setTranslator($googleTranslator);
-$tm->t('hello world');
-```
-
-then it will output 
-
-    你好，世界
-    
-## You may think "Are you kidding me ?!",so let's put a big meal on table
-
-
-```php
-//add html parser plugin in it
-$htmlParser = new HTMLParser();
+$tm = new TranslationMemory();
 $tm->addParser('html', $htmlParser);
 echo $html_content = file_get_contents('https://github.com/about');
 ```

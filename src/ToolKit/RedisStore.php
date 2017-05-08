@@ -1,21 +1,46 @@
 <?php
-require_once '../autoload.php';
+namespace Translation\ToolKit;
 
 use Translation\Protocol\Store;
 use Redis;
 
+/**
+ * a simple impliments of translation memory store
+ * @author Nay Kang
+ *
+ */
 class RedisStore implements Store{
-    const PREFIX = 'trans_';
+    protected $prefix = 'trans_';
     protected $partition = '';
     protected $redis = null;
     
-    public function __construct(){
+    /**
+     * Create a new store instance
+     * @param array $options redis connect config and prefix
+     */
+    public function __construct(array $options = []){
         $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1');
+        $default = [
+            'ip' => '127.0.0.1',
+            'port' => '6379',
+            'database' => '0',
+            'auth' => false,
+            'prefix' => $this->prefix
+        ];
+        $options = array_merge($default,$options);
+        
+        $this->redis->connect($options['ip'],$options['port']);
+        if($options['database']){
+            $this->redis->select($options['database']);
+        }
+        if($options['auth']){
+            $this->redis->auth($options['auth']);
+        }
+        $this->prefix = $options['prefix'];
     }
 
     protected function wrapKey($key){
-        return self::PREFIX.$this->partition.':'.$key;
+        return $this->prefix.$this->partition.':'.$key;
     }
 
     public function setDefaultPartition($partition){

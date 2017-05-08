@@ -4,6 +4,10 @@ namespace Translation;
 use Translation\Protocol\Parser;
 use Translation\Protocol\Store;
 use Translation\Protocol\Translator;
+use Translation\ToolKit\RedisStore;
+use Translation\Translator\FreeGoogle;
+use Translation\Parser\ParagraphParser;
+use Translation\Parser\HTMLParser;
 
 /**
  * Translation Core library,all operation will apply on this class
@@ -37,18 +41,30 @@ class TranslationMemory{
      * @param array $parsers
      * @param Translator $translator
      */
-    public function __construct(Store $store,array $options=[],array $parsers=[],Translator $translator=null){
+    public function __construct(Store $store=null,array $options=[],array $parsers=[],Translator $translator=null){
+        if($store==null){
+            $store = new RedisStore();
+        }
         $this->setStore($store);
         
         foreach($options as $k=>$option){
             $this->setConfig($k, $option);
         }
+        
+        //set default parser
+        $paragraphParser = new ParagraphParser();
+        $this->addParser('paragraph', $paragraphParser);
+        $htmlParser = new HTMLParser();
+        $this->addParser('html', $htmlParser);
+        
         foreach($parsers as $type=>$parser){
             $this->addParser($type, $parser);
         }
         
-        if($translator)
-            $this->setTranslator($translator);
+        if($translator==null){
+            $translator = new FreeGoogle();
+        }
+        $this->setTranslator($translator);
         
         $this->refreshTarget();
     }
