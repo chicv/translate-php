@@ -79,6 +79,7 @@ class TranslationMemory{
         if(in_array($key, ['from','to'])){
             $this->refreshTarget();
         }
+        return $this;
     }
     
     

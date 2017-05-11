@@ -12,6 +12,7 @@ use Translation\TranslationMemory;
  */
 class Localizejs{
     const END_POINT = 'https://api.localizejs.com';
+    const TRANSLATOR_NAME = 'Localizejs';
     
     private $client = null;
     private $project_key = null;
@@ -71,8 +72,9 @@ class Localizejs{
             $tm->setConfig('to', $language_to_code);
             $tm->setConfig('from', 'en');//hard code,because localizejs only support english translate to other language
             $original = ltrim($trans['phrase'],'#');
-            $tm->setTranslation($original, $trans['value'], 'Localizejs');
+            $tm->setTranslation($original, $trans['value'], self::TRANSLATOR_NAME);
         }
+        return count($translations['data']['translations']);
     }
     
     /**
@@ -81,11 +83,12 @@ class Localizejs{
      * @param TranslationMemory $tm
      * @return number
      */
-    public function createPhraseFromLocal(TranslationMemory $tm){
+    public function createPhraseFromLocal(TranslationMemory $tm,$language_to_code){
+        $tm->setConfig('to', $language_to_code);
         $list = $tm->getList();
         $count = 0;
         foreach($list as $v){
-            if($v['translator']!='Localizejs'){
+            if($v['translator']!=self::TRANSLATOR_NAME){
                 $count++;
                 $this->createPharse($v['original']);
             }
