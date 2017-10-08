@@ -65,11 +65,7 @@ class HTMLParser implements Parser{
     * @return string $html
     */
     public function syntaxFix($html){
-      //only under php7,symtax error will occur
-      //and javascript will be problem
-      if (version_compare(PHP_VERSION, '7.0.0') < 0){
-          $html = preg_replace('/\&(?!\w+;|#|&)/','&amp;',$html);
-      }
+      $html = preg_replace('/\&(?!\w+;|#|&)/','&amp;',$html);
       return $html;
     }
 }
