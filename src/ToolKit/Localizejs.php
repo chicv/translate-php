@@ -97,15 +97,16 @@ class Localizejs{
     }
     
     /**
-     * Localizejs not support some code like zh-tw
+     * I thought localizejs do not support zh-tw,but it support
      * @param string $code
      * @throws \Exception
      */
     protected function convertLanguageCode($code){
-        if(strtolower($code)=='zh-tw'){
-            throw new \Exception('Code:'.$code.' not support');
-        }
-        return substr($code, 0,2);
+        #if(strtolower($code)=='zh-tw'){
+        #    throw new \Exception('Code:'.$code.' not support');
+        #}
+        #return substr($code, 0,2);
+        return $code;
     }
     
     /**
